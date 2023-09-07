@@ -104,6 +104,8 @@ Generates Fig. 2, S4, S5
 > "02b_Script_SavedImages"
 Saved Rdat from select R scripts. These are generated and loaded at the end of R scripts.
 
+NOTE "05_PropNfix_2015_2016_Rdat" was too large to share on Github and is kept locally. It can be generated with code ("05_PropNfixers_2015_16_17.R") and data in this repo. The original file is available upon request.
+
 
 ----------
 > "03_Model_RDS"

@@ -1,5 +1,5 @@
 # Areal responses for 2017
-# JMH, Dec 2022/Jan 2023
+# JMH, Dec 2022/Jan 2023, Jun 24
 
 
 # Libraries ----
@@ -41,10 +41,12 @@ chanF <- chan %>%
          N_uM, P_uM, NPratio,
          NEP_uM_C_gAFDM_h, R_uM_C_gAFDM_h, GPP_uM_C_gAFDM_h, 
          NUp_uM_N_gAFDM_h, Nfix_uM_N_gAFDM_h, TotNAssim_uM_N_gAFDM_h) %>% 
+  # combining lower NP treatments into low
+  mutate(NPratio = ifelse(NPratio %in% c("0.31", "0.93"), "Low", "High")) %>% 
   mutate(across(c(NPratio, N_uM, P_uM), factor)) %>% 
   mutate(N_uM = fct_relevel(N_uM, c("0.11", "3.68"))) %>% 
   mutate(P_uM = fct_relevel(P_uM, c("0.36", "3.94"))) %>% 
-  mutate(NPratio = fct_relevel(NPratio, c("0.31",  "0.93",  "10.22"))) %>% 
+  mutate(NPratio = fct_relevel(NPratio, c("Low",  "High"))) %>% 
   pivot_longer(cols = NEP_uM_C_gAFDM_h:TotNAssim_uM_N_gAFDM_h, names_to = "Response", values_to = "Values") %>% 
   mutate(MetDate2 = as.factor(MetDate),
          MetDate2 = fct_reorder(MetDate2, MetDate),
@@ -344,8 +346,8 @@ Nup_ModSel <- fun_ms_gams(NUp_uM_N_gAFDM_h, chanF, NupModFam); Nup_ModSel
 chanF_Nup <- chanF %>% 
   filter(Response == "NUp_uM_N_gAFDM_h")
 
-# N:P!
-Nup_MostLikely <- gam(Values ~ s(MeanPre2wksTemp) + NPratio + s(MetDate2, bs = "re"),
+# N
+Nup_MostLikely <- gam(Values ~ s(MeanPre2wksTemp) + N_uM + s(MetDate2, bs = "re"),
                       family = NupModFam,
                       data = chanF_Nup, 
                       method = "REML")
@@ -411,7 +413,7 @@ chanF_Nass <- chanF %>%
   filter(Response == "TotNAssim_uM_N_gAFDM_h")
 
 # Best model has N:P
-Nass_MostLikely <- gam(Values ~ s(MeanPre2wksTemp) + NPratio + s(MetDate2, bs = "re"),
+Nass_MostLikely <- gam(Values ~ s(MeanPre2wksTemp) + N_uM + s(MetDate2, bs = "re"),
                        family = NassModFam,
                        data = chanF_Nass, 
                        method = "REML")
@@ -427,4 +429,4 @@ saveRDS(Nass_MostLikely, "03_Model_RDS/MassSpec_2017_Nass_mostlikely.rds")
 
 
 # save image ----
-save.image("02b_Script_SavedImages/08_2017_GAMs_MassSpecific_Rdat")
+# save.image("02b_Script_SavedImages/08_2017_GAMs_MassSpecific.Rdata")

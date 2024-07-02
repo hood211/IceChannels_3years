@@ -1,5 +1,6 @@
 # JMH 2023
 # Generates Fig. 2, S4, and S5
+# update 2 Jul 24
 
 library(tidyverse)
 
@@ -124,33 +125,41 @@ bio15 <- BioDyn %>%
                          nitrogen_ugL == 100 ~ 7.1,
                          nitrogen_ugL == 150 ~ 10.7,
                          nitrogen_ugL == 200 ~ 14.3),
+         NuM = as.factor(NuM),
+         NuM = fct_relevel(NuM, "0", "1.8", "3.6", "7.1", "10.7", "14.3"),
          date_col = case_when(date == "2015-07-13" | date == "2015-07-14" | date == "2015-07-15" | date == "2015-07-16" | date == "2015-07-17" | date == "2015-07-18" ~ "MD1", 
                                 date == "2015-07-27" | date == "2015-07-28" | date == "2015-07-29" | date == "2015-07-30" ~ "MD2",
                               TRUE ~ "TS"),
          date_col = as.factor(date_col)) %>% 
   droplevels()
 
-png("05_Figures4MS/19_Fig2_BMtimeSeries2015.png", units = "in", height = 12, width = 15, res = 300)
+
+Nlabels_2015 <- c("0 µM-N", "1.8 µM-N", "3.6 µM-N", "7.1 µM-N", "10.7 µM-N", "14.3 µM-N")
+names(Nlabels_2015) <-  c("0", "1.8", "3.6", "7.1", "10.7", "14.3")
+
+png("05_Figures4MS/19_Fig2_BMtimeSeries2015.png", units = "in", height = 13, width = 15, res = 300)
 ggplot() +
   geom_line(data = bio15, aes(y = gAFDM_m2_F, x = ExpDays), color = "grey20") +
   geom_point(data = bio15, aes(y = gAFDM_m2_F, x = ExpDays, fill = date_col),
              shape = 21, size = 4) +
-  facet_grid(as.factor(NuM) ~ TempFval) +
+  facet_grid(NuM ~ TempFval, labeller = labeller(NuM = Nlabels_2015)) +
   xlab("Day of experiment") +
   ylab(expression(paste("Biofilm biomass (g AFDM ",m^-2,")"))) +
   scale_fill_manual(values = c("grey40", "violet", "violetred3"), 
                     name = "Measurement type") +
   theme_bw() +
   theme(panel.background = element_rect(fill = "white", color = "white"),
-        panel.border = element_rect(color = "black", fill = "NA", size = 1),
+        panel.border = element_rect(color = "black", fill = "NA", linewidth = 1),
+        panel.spacing.x = unit(15, "pt"),
+        panel.spacing.y = unit(15, "pt"),
         axis.title.x = element_text(size = 32),
         axis.title.y = element_text(size = 32),
         axis.text = element_text(size = 22),
-        axis.line = element_line(color = "black", size = 1),
+        axis.line = element_line(color = "black", linewidth = 1),
         plot.background = element_rect(fill = "white", color =  "white"),
         strip.background = element_blank(),
-        strip.text.x = element_text(size = 28, face = "bold"),
-        strip.text.y = element_text(size = 28, face = "bold"),
+        strip.text.x = element_text(size = 25, face = "bold"),
+        strip.text.y = element_text(size = 25, face = "bold"),
         legend.position = "top",
         legend.title = element_text(size = 24, face = "bold"),
         legend.text = element_text(size = 24, face = "bold"),
@@ -174,25 +183,34 @@ bio16 <- BioDyn %>%
                          phosphorus_ugL == 100 ~ 3.6,
                          phosphorus_ugL == 150 ~ 4.8,
                          phosphorus_ugL == 200 ~ 6.5),
+         PuM = as.factor(PuM),
+         PuM = fct_relevel(PuM, "0", "0.8", "1.6", "3.6", "4.8", "6.5"),
          date_col = case_when(date %in% c(D1_2016_met, D1_2016_up, D1_2016_nfix) ~ "MD1",
                               date %in% c(D2_2016_met, D2_2016_up, D2_2016_nfix) ~ "MD2",
                               TRUE ~ "TS"),
          date_col = as.factor(date_col)) %>% 
   droplevels()
 
-png("05_Figures4MS/19_FigS3_BMtimeSeries2016.png", units = "in", height = 12, width = 15, res = 300)
+Plabels_2016 <- c("0 µM-N", "0.8 µM-N", "1.6 µM-N", "3.6 µM-N", "4.8 µM-N", "6.5 µM-N")
+names(Plabels_2016) <-  c("0", "0.8", "1.6", "3.6", "4.8", "6.5")
+
+png("05_Figures4MS/19_FigS5_BMtimeSeries2016.png", units = "in", height = 12, width = 15, res = 300)
 ggplot() +
   geom_line(data = bio16, aes(y = gAFDM_m2_F, x = ExpDays), color = "grey20") +
   geom_point(data = bio16, aes(y = gAFDM_m2_F, x = ExpDays, fill = date_col),
              shape = 21, size = 4) +
-  facet_grid(as.factor(PuM) ~ TempFval) +
+  facet_grid(PuM ~ TempFval,
+             labeller = labeller(PuM = Nlabels_2015)) +
   xlab("Day of experiment") +
   ylab(expression(paste("Biofilm biomass (g AFDM ",m^-2,")"))) +
   scale_fill_manual(values = c("grey40", "violet", "violetred3"), 
                     name = "Measurement type") +
+  # scale_y_continuous(sec.axis = sec_axis(trans = ~.))+
   theme_bw() +
   theme(panel.background = element_rect(fill = "white", color = "white"),
         panel.border = element_rect(color = "black", fill = "NA", size = 1),
+        panel.spacing.x = unit(15, "pt"),
+        panel.spacing.y = unit(15, "pt"),
         axis.title.x = element_text(size = 32),
         axis.title.y = element_text(size = 32),
         axis.text = element_text(size = 22),
@@ -200,8 +218,9 @@ ggplot() +
         plot.background = element_rect(fill = "white", color =  "white"),
         strip.background = element_blank(),
         # strip.background = element_rect(fill = "grey", color =  "white"),
-        strip.text.x = element_text(size = 28, face = "bold"),
-        strip.text.y = element_text(size = 28, face = "bold"),
+        strip.text.x = element_text(size = 25, face = "bold"),
+        strip.text.y = element_text(size = 25, face = "bold"),
+        # strip.placement = "outside",
         legend.position = "top",
         legend.title = element_text(size = 24, face = "bold"),
         legend.text = element_text(size = 24, face = "bold"),
@@ -226,6 +245,8 @@ bio17 <- BioDyn %>%
   mutate(NandP_uM = case_when(NandP2 == "0 N, 0 P" ~ "0 N, 0 P",
                               NandP2 == "50 N, 0 P" ~ "3.6 N, 0 P",
                               NandP2 == "50 N, 111 P" ~ "3.6 N, 3.6 P"),
+         NandP_uM = as.factor(NandP_uM),
+         NandP_uM = fct_relevel(NandP_uM, "0 N, 0 P","3.6 N, 0 P","3.6 N, 3.6 P"),
          date_col = case_when(date %in% c(D1_2017_met, D1_2017_up, D1_2017_nfix) ~ "MD1",
                               date %in% c(D2_2017_met, D2_2017_up, D2_2017_nfix) ~ "MD2",
                               TRUE ~ "TS"),
@@ -236,12 +257,16 @@ bio17 <- BioDyn %>%
   filter(!(date == "2017-07-10" & channel == "12" )) %>% 
   droplevels() 
 
-png("05_Figures4MS/19_FigS5_BMtimeSeries2017.png", units = "in", height = 12, width = 15, res = 300)
+NPlabels_2017 <- c("0 µM-N, 0 µM-P","3.6 µM-N, 0 µM-P","3.6 µM-N, 3.6 µM-P")
+names(NPlabels_2017) <-  c("0 N, 0 P","3.6 N, 0 P","3.6 N, 3.6 P")
+
+png("05_Figures4MS/19_FigS6_BMtimeSeries2017.png", units = "in", height = 12, width = 15, res = 300)
 ggplot() +
   geom_line(data = bio17, aes(y = gAFDM_m2_F, x = ExpDays, linetype = Rep), color = "grey20") +
   geom_point(data = bio17, aes(y = gAFDM_m2_F, x = ExpDays, fill = date_col, shape = Rep),
               size = 4) +
-  facet_grid(as.factor(NandP_uM) ~ TempFval) +
+  facet_grid(NandP_uM ~ TempFval,
+             labeller = labeller(NandP_uM = NPlabels_2017)) +
   xlab("Day of experiment") +
   ylab(expression(paste("Biofilm biomass (g AFDM ",m^-2,")"))) +
   scale_fill_manual(values = c("grey40", "violet", "violetred3"), 
@@ -251,6 +276,8 @@ ggplot() +
   theme_bw() +
   theme(panel.background = element_rect(fill = "white", color = "white"),
         panel.border = element_rect(color = "black", fill = "NA", size = 1),
+        panel.spacing.x = unit(15, "pt"),
+        panel.spacing.y = unit(15, "pt"),
         axis.title.x = element_text(size = 32),
         axis.title.y = element_text(size = 32),
         axis.text = element_text(size = 22),
@@ -258,8 +285,8 @@ ggplot() +
         plot.background = element_rect(fill = "white", color =  "white"),
         strip.background = element_blank(),
         # strip.background = element_rect(fill = "grey", color =  "white"),
-        strip.text.x = element_text(size = 28, face = "bold"),
-        strip.text.y = element_text(size = 28, face = "bold"),
+        strip.text.x = element_text(size = 25, face = "bold"),
+        strip.text.y = element_text(size = 25, face = "bold"),
         legend.position = "top",
         legend.title = element_text(size = 24, face = "bold"),
         legend.text = element_text(size = 24, face = "bold"),
@@ -267,5 +294,6 @@ ggplot() +
 dev.off()
 
 # save/load
-save.image("02b_Script_SavedImages/19_Fig2_S2S3_BiomassDynamics_Rdat")
+# save.image("02b_Script_SavedImages/19_Fig2_S2S3_BiomassDynamics_Rdat")
+# load("02b_Script_SavedImages/19_Fig2_S2S3_BiomassDynamics_Rdat")
 

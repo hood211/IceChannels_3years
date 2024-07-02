@@ -1,4 +1,4 @@
-#  AFDM 2016 and 2017
+# calculating AFDM
 # Oct 2022, JMH
 # Oct 2022, LMC
 
@@ -7,8 +7,7 @@ library(tidyverse)
 
 # data ----
 ## 2016 ----
-# bm16 doesn't contain N-fixation AFDM-- we're bringing that data in further down in the script
-# St. Kates didn't give us raw AFDM values-- they gave us "Total Sample AFDM (g)" which represents the AFDM in each chamber during the N-fix measurements
+# bm16 doesn't contain N-fixation AFDM-- we're bringing that data in further down in the script b/c St. Kates didn't give us raw AFDM values-- they gave us "Total Sample AFDM (g)" which represents the AFDM in each chamber during the N-fix measurements
 # units here are g AFDM/m2
 bm16 <- read.csv("00_BestDataFromLyndsie/IceChan_AFDM_2016_updated.csv", row.names = 1) %>% 
                 select(-c(DryWt_g, afdm_g_m2)) %>% # since we're re-calculating these values in this script, I wanted to remove these (LMC)
@@ -131,7 +130,19 @@ bm17_3 <- bm17_2 %>%
 names(bm17_3)[4:6] <- paste0(names(bm17_3)[4:6],"_gAFDM_m2")
 
 # N-fix AFDM data
-# issues with data, can not use
+# LMC: SOMETHING IS WRONG WITH THESE DATA-- values are off by a factor of ~100 compared to 2015 and 2016
+# LMC: We have 2015 raw data to confirm that "Total_AFDM_Sample" was calculated as: Dry Sample - Ash Sample * (Total Vol Filtered / AFDM Vol Filtered)-- so "Total_AFDM_sample" is supposed to represent the AFDM in each chamber during the N-fix measurements.
+# However, it's clear something is wrong with the 2017 data-- since we don't have raw values we can't figure out what's wrong
+bm17nfix <- read.csv("00_BestDataFromLyndsie/2017_Channel_Nfix_AFDM_data_LMC.csv") %>% 
+  mutate(gAFDM_m2 = Total_AFDM_sample_g / (0.025 * 0.025 * 4)) # Dividing by tile length and width (0.025m and number of tiles (4) gets us the areal rate
+
+# CAN'T JOIN N-FIX SINCE IT'S NOT CORRECT
+# bm17_4 <- bm17_3 %>% 
+#   left_join(bm17nfix %>% 
+#               select(Channel, Smp_event, gAFDM_m2), by = c("channel" = "Channel", "ExpDay2" = "Smp_event"))
+
+# names(bm17_4)[7] <- "Nfix"
+# names(bm17_4)[4:7] <- paste0(names(bm17_4)[4:7],"_gAFDM_m2")
 
 
 write.csv(bm17_3, "00_BestDataFromLyndsie/2017ChannelAFDM_cleaned.csv")

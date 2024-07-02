@@ -157,8 +157,8 @@ Areal_2017_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2017_AFDM_mostlikely.r
                             Basis = "Areal",
                             Res = "Nup")
    
-  # NP ratio  
-   p2017.MS.Nup <- predict_gam(MS_2017_Nup_MostLikely, values = list(NPratio = NP,
+  
+   p2017.MS.Nup <- predict_gam(MS_2017_Nup_MostLikely, values = list(N_uM = N_uM,
                                                                      MeanPre2wksTemp = TempRange2017,
                                                                      MetDate2 = Dates2017)) %>%
                    mutate(fit.bt = exp(fit)/1000,
@@ -166,8 +166,9 @@ Areal_2017_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2017_AFDM_mostlikely.r
                           se.fitU.bt = exp(fit+se.fit)/1000,
                           Basis = "MS",
                           Res = "Nup",
-                          N_uM = "0.1-3.7 uM-N",
-                          P_uM = "0.4-3.9") %>% 
+                          # N_uM = "0.1-3.7 uM-N",
+                          P_uM = "0.4-3.9",
+                          NPratio = "0.3-10.2") %>% 
                    # reorder
                    select("MeanPre2wksTemp", "N_uM", "P_uM", "NPratio", "MetDate2", 
                           "fit", "se.fit", 'fit.bt', "se.fitL.bt", "se.fitU.bt", "Basis", "Res")
@@ -214,7 +215,7 @@ Areal_2017_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2017_AFDM_mostlikely.r
                           Res = "Nassim")
    
    # NP ratio
-   p2017.MS.Nass <- predict_gam(MS_2017_NAssim_MostLikely, values = list(NPratio = NP,
+   p2017.MS.Nass <- predict_gam(MS_2017_NAssim_MostLikely, values = list(N_uM = N_uM,
                                                                        MeanPre2wksTemp = TempRange2017,
                                                                        MetDate2 = Dates2017)) %>%
                  mutate(fit.bt = exp(fit)/1000,
@@ -222,8 +223,9 @@ Areal_2017_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2017_AFDM_mostlikely.r
                         se.fitU.bt = exp(fit+se.fit)/1000,
                         Basis = "MS",
                          Res = "Nassim",
-                         N_uM = "0.1-3.7 uM-N",
-                         P_uM = "0.4-3.9")  %>% 
+                         # N_uM = "0.1-3.7 uM-N",
+                         P_uM = "0.4-3.9",
+                        NPratio = "0.3-10.2")  %>% 
                # reorder
                select("MeanPre2wksTemp", "N_uM", "P_uM", "NPratio", "MetDate2", 
                       "fit", "se.fit", 'fit.bt', "se.fitL.bt", "se.fitU.bt", "Basis", "Res")
@@ -259,13 +261,12 @@ Areal_2017_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2017_AFDM_mostlikely.r
                      MetDate2 = as.factor(MetDate2),
                      N_uM2 = fct_recode(N_uM, "0 µM-N" = "0.11", "3.6 µM-N" = "3.68"),
                      P_uM2 = fct_recode(P_uM, "0 µM-P" = "0.36", "3.6 µM-P" = "3.94"),
-                     NPratio2 = fct_recode(NPratio, "N:P = 0.3" = "0.31", "N:P = 0.9" = "0.93", "N:P = 10" = "10.22"),
+                     # NPratio2 = fct_recode(NPratio, "N:P = 0.3" = "0.31", "N:P = 0.9" = "0.93", "N:P = 10" = "10.22"),
                      Trt = as.factor(ifelse(Res %in% c("GPP", "ER", "NEP"), as.character(P_uM2),
-                                            ifelse(Res %in% c("Nup", "Nassim"), as.character(NPratio2),
+                                            ifelse(Res %in% c("Nup", "Nassim"), as.character(N_uM2),
                                                    ifelse(Res == "Nfix", as.character(N_uM2), "blah")))),
                      Trt = fct_relevel(Trt, "0 µM-N", "3.6 µM-N",
-                                            "0 µM-P", "3.6 µM-P",
-                                            "N:P = 0.3", "N:P = 0.9", "N:P = 10"),
+                                            "0 µM-P", "3.6 µM-P"),
                      Res = fct_relevel(Res, "ER", "GPP", "NEP",
                                        "Nassim", "Nup", "Nfix")) 
 
@@ -414,51 +415,51 @@ Areal_2017_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2017_AFDM_mostlikely.r
     
     # Mass-specific labels
     grid.text("MS ER",
-              x = unit(0.46,"npc"), y = unit(0.9,"npc"), 
+              x = unit(0.44,"npc"), y = unit(0.9,"npc"), 
               gp=gpar(fontsize = 22, fontface = "bold"), rot = 90)
     
     grid.text(expression(paste("(mM C g ", AFDM^{-1}," ", h^{-1},")")),
-              x = unit(0.48,"npc"), y = unit(0.9,"npc"), 
+              x = unit(0.46,"npc"), y = unit(0.9,"npc"), 
               gp=gpar(fontsize = 20, fontface = "bold"), rot = 90)
     
     grid.text("MS GPP",
-              x = unit(0.46,"npc"), y = unit(0.75,"npc"), 
+              x = unit(0.44,"npc"), y = unit(0.75,"npc"), 
               gp=gpar(fontsize = 22, fontface = "bold"), rot = 90)
     
     grid.text(expression(paste("(mM C g ", AFDM^{-1}," ", h^{-1},")")),
-              x = unit(0.48,"npc"), y = unit(0.75,"npc"), 
+              x = unit(0.46,"npc"), y = unit(0.75,"npc"), 
               gp=gpar(fontsize = 20, fontface = "bold"), rot = 90)
     
     grid.text("MS NEP",
-              x = unit(0.46,"npc"), y = unit(0.59,"npc"), 
+              x = unit(0.44,"npc"), y = unit(0.59,"npc"), 
               gp=gpar(fontsize = 22, fontface = "bold"), rot = 90)
     
     grid.text(expression(paste("(mM C g ", AFDM^{-1}," ", h^{-1},")")),
-              x = unit(0.48,"npc"), y = unit(0.59,"npc"), 
+              x = unit(0.46,"npc"), y = unit(0.59,"npc"), 
               gp=gpar(fontsize = 20, fontface = "bold"), rot = 90)
     
     grid.text("MS Total N assim.",
-              x = unit(0.46,"npc"), y = unit(0.435,"npc"), 
+              x = unit(0.44,"npc"), y = unit(0.435,"npc"), 
               gp=gpar(fontsize = 22, fontface = "bold"), rot = 90)
     
     grid.text(expression(paste("(mM N g ", AFDM^{-1}," ", h^{-1},")")),
-              x = unit(0.48,"npc"), y = unit(0.435,"npc"), 
+              x = unit(0.46,"npc"), y = unit(0.435,"npc"), 
               gp=gpar(fontsize = 20, fontface = "bold"), rot = 90)
     
     grid.text("MS N uptake",
-              x = unit(0.46,"npc"), y = unit(0.285,"npc"), 
+              x = unit(0.44,"npc"), y = unit(0.285,"npc"), 
               gp=gpar(fontsize = 22, fontface = "bold"), rot = 90)
     
     grid.text(expression(paste("(mM N g ", AFDM^{-1}," ", h^{-1},")")),
-              x = unit(0.48,"npc"), y = unit(0.285,"npc"), 
+              x = unit(0.46,"npc"), y = unit(0.285,"npc"), 
               gp=gpar(fontsize = 20, fontface = "bold"), rot = 90)
     
     grid.text(expression(bold(paste("MS ",N[2]," fixation"))), 
-              x = unit(0.46,"npc"), y = unit(0.125,"npc"), 
+              x = unit(0.44,"npc"), y = unit(0.125,"npc"), 
               gp=gpar(fontsize = 22, fontface = "bold"), rot = 90)
     
     grid.text(expression(paste("(mM N g ", AFDM^{-1}," ", h^{-1},")")),
-              x = unit(0.48,"npc"), y = unit(0.125,"npc"), 
+              x = unit(0.46,"npc"), y = unit(0.125,"npc"), 
               gp=gpar(fontsize = 20, fontface = "bold"), rot = 90)
     
 

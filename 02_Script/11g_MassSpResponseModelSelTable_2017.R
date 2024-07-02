@@ -1,5 +1,5 @@
 # Model selection tables for areal GAMMs from 2017
-# JMH Jan 2023
+# JMH Jan 2023, June 24
 
 # Libraries ----
 library(tidyverse)
@@ -9,7 +9,7 @@ library(gt)
 library(glue)
 
 # Saved image from modeling script ----
-load("02b_Script_savedImages/08_2017_GAMs_MassSpecific_Rdat")
+load("02b_Script_savedImages/08_2017_GAMs_MassSpecific.Rdata")
 
 
 # Model selection table ----

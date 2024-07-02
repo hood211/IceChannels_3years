@@ -1,5 +1,5 @@
 # Areal responses for 2017
-# JMH, Dec 2022
+# JMH, Dec 2022, Jul 2024
 
 # Libraries ----
 # general
@@ -24,10 +24,12 @@ chanF <- chan %>%
          Met_gAFDM_m2,
          NUp_uM_N_m2_hr, Nfix_uM_N_m2h, TotAssim_uM_N_m2_hr,
          propNfixer) %>% 
+  # combining lower NP treatments into low
+  mutate(NPratio = ifelse(NPratio %in% c("0.31", "0.93"), "Low", "High")) %>% 
   mutate(across(c(NPratio, N_uM, P_uM), factor)) %>% 
   mutate(N_uM = fct_relevel(N_uM, c("0.11", "3.68"))) %>% 
   mutate(P_uM = fct_relevel(P_uM, c("0.36", "3.94"))) %>% 
-  mutate(NPratio = fct_relevel(NPratio, c("0.31",  "0.93",  "10.22"))) %>% 
+  mutate(NPratio = fct_relevel(NPratio, c("Low",  "High"))) %>% 
   pivot_longer(cols = NEP_uM_C_m2h:propNfixer, names_to = "Response", values_to = "Values") %>% 
   mutate(MetDate2 = as.factor(MetDate),
          MetDate2 = fct_reorder(MetDate2, MetDate),
@@ -40,10 +42,12 @@ chanAFDM <- chan %>%
   select(channel, MetDate, MeanPre2wksTemp, 
          N_uM, P_uM, NPratio,
          Met_gAFDM_m2, Nup_gAFDM_m2, Pup_gAFDM_m2) %>% 
+  # combining lower NP treatments into low
+  mutate(NPratio = ifelse(NPratio %in% c("0.31", "0.93"), "Low", "High")) %>% 
   mutate(across(c(NPratio, N_uM, P_uM), factor)) %>% 
   mutate(N_uM = fct_relevel(N_uM, c("0.11", "3.68"))) %>% 
   mutate(P_uM = fct_relevel(P_uM, c("0.36", "3.94"))) %>% 
-  mutate(NPratio = fct_relevel(NPratio, c("0.31",  "0.93",  "10.22"))) %>% 
+  mutate(NPratio = fct_relevel(NPratio, c("Low",  "High"))) %>% 
   pivot_longer(cols = c(Met_gAFDM_m2:Pup_gAFDM_m2), names_to = "AFDM_smp", values_to = "Values") %>% 
   mutate(AFDM_smp = as.factor(AFDM_smp),
          Response = "gAFDM_m2",
@@ -325,8 +329,8 @@ Nup_ModSel <- fun_ms_gams(NUp_uM_N_m2_hr, chanF, NupModFam); Nup_ModSel
 chanF_Nup <- chanF %>% 
   filter(Response == "NUp_uM_N_m2_hr")
 
-# model with N:P is similar,, however, the big difference is between the two lowest sub 1 N:P ratios, 
-# not consistent with expectations
+# N:P model is most likely, but % dev explained with N is 8% more.
+# Dif in AIC due to edf of MetDate?
 Nup_MostLikely <- gam(Values ~ s(MeanPre2wksTemp) + N_uM + s(MetDate2, bs = "re"),
                       family = NupModFam,
                       data = chanF_Nup, 
@@ -423,16 +427,9 @@ saveRDS(Nass_MostLikely, "03_Model_RDS/Areal_2017_Nass_mostlikely.rds")
     filter(Response == "gAFDM_m2")
   
   # most likely
-  # seems to be systematically under predicting highest values
-  # this is primarily driven by N - break in N:P at the "wrong N:P"
-  AFDM_MostLikely = gam(Values ~ s(MeanPre2wksTemp) + NPratio_date + s(MetDate2, bs = "re"),
+  AFDM_MostLikely = gam(Values ~ s(MeanPre2wksTemp) + N_uM + s(MetDate2, bs = "re"),
                         family = AFDM_ModFam,
                         data = chanAFDM2)
-  
-  AFDM_MostLikely2 = gam(Values ~ s(MeanPre2wksTemp) + N_uM + s(MetDate2, bs = "re"),
-                        family = AFDM_ModFam,
-                        data = chanAFDM2)
-  
   
   summary(AFDM_MostLikely)
   check(getViz(AFDM_MostLikely))  
@@ -443,5 +440,5 @@ saveRDS(Nass_MostLikely, "03_Model_RDS/Areal_2017_Nass_mostlikely.rds")
 
 
 # save image ----
-# save.image("02b_Script_SavedImages/08_2017_GAMs_Areal_Rdat")
-# load("02b_Script_SavedImages/08_2017_GAMs_Areal_Rdat")
+# save.image("02b_Script_SavedImages/08_2017_GAMs_Areal.Rdata")
+# load("02b_Script_SavedImages/08_2017_GAMs_Areal.Rdata")

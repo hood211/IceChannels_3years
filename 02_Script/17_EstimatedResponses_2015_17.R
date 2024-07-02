@@ -3,7 +3,7 @@
 # 0 and 3.6 N or P
 # day 1 and 2
 # JMH Jun 2023
-#JMH Aug 2023
+#JMH Aug 2023, June 24
 
 
 # Libraries ----
@@ -243,6 +243,19 @@ Nassim_2017 <- readRDS("03_Model_RDS/Areal_2017_Nass_mostlikely.rds")
 AFDM_2017 <- readRDS("03_Model_RDS/Areal_2017_AFDM_mostlikely.rds")
 
 # response tables
+RT_AFDM_2017_areal <- predict_gam(AFDM_2017, values = list(MetDate2 = c("2017-07-11", "2017-07-22"),
+                                                       MeanPre2wksTemp = c(11,21)),
+                                tran_fun = exp) %>% 
+                    mutate(N_uM = ifelse(N_uM == 0.11, 0, 3.6),
+                           Temp_N = paste0("TN_",MeanPre2wksTemp,"_", N_uM)) %>% 
+                    pivot_wider(id_cols = MetDate2, names_from = Temp_N, values_from = Values) %>% 
+                    mutate(Temp_LowN_PerChange = (TN_21_0-TN_11_0)/TN_11_0*100,
+                           Temp_HighN_PerChange = (TN_21_3.6-TN_11_3.6)/TN_11_3.6*100,
+                           N_Cold_PerChange = (TN_11_3.6- TN_11_0)/TN_11_0*100,
+                           N_Warm_PerChange = (TN_21_3.6- TN_21_0)/TN_11_0*100,
+                           Response = "2017_AFDM_Areal",
+                           Nutrient = "N")
+
 RT_ER_2017_areal <- predict_gam(ER_2017, values = list(MetDate2 = c("2017-07-11", "2017-07-22"),
                                                         MeanPre2wksTemp = c(11,21)),
                                 tran_fun = exp) %>% 
@@ -338,9 +351,9 @@ RT_Nassim_2017_areal <- predict_gam(Nassim_2017, values = list(MetDate2 = c("201
 ER_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_ER_mostlikely.rds")
 GPP_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_GPP_mostlikely.rds")
 NEP_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_NEP_mostlikely.rds")
-Nup_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_Nup_mostlikely.rds") # uses NP
+Nup_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_Nup_mostlikely.rds") # uses NP, now N
 Nfix_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_Nfix_mostlikely.rds")
-Nassim_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_Nass_mostlikely.rds") # uses NP
+Nassim_2017_MS <- readRDS("03_Model_RDS/MassSpec_2017_Nass_mostlikely.rds") # uses NP, now N
 
 # response tables
 
@@ -411,25 +424,55 @@ RT_Nfix_2017_MS <- predict_gam(Nfix_2017_MS, values = list(MetDate2 = c("2017-07
                Response = "2017_Nfix_MS",
                Nutrient = "N")
 
+RT_Nup_2017_MS <- predict_gam(Nup_2017_MS, values = list(MetDate2 = c("2017-07-11", "2017-07-22"),
+                                                           MeanPre2wksTemp = c(11,21)),
+                               tran_fun = exp) %>% 
+          mutate(N_uM = ifelse(N_uM == 0.11, 0, 3.6),
+                 Temp_N = paste0("TN_",MeanPre2wksTemp,"_", N_uM)) %>% 
+          pivot_wider(id_cols = MetDate2, names_from = Temp_N, values_from = Values) %>% 
+          mutate(Temp_LowN_PerChange = (TN_21_0-TN_11_0)/TN_11_0*100,
+                 Temp_HighN_PerChange = (TN_21_3.6-TN_11_3.6)/TN_11_3.6*100,
+                 N_Cold_PerChange = (TN_11_3.6- TN_11_0)/TN_11_0*100,
+                 N_Warm_PerChange = (TN_21_3.6- TN_21_0)/TN_11_0*100,
+                 Response = "2017_Nup_MS",
+                 Nutrient = "N")
+
+
+RT_Nassim_2017_MS <- predict_gam(Nassim_2017_MS, values = list(MetDate2 = c("2017-07-11", "2017-07-22"),
+                                                         MeanPre2wksTemp = c(11,21)),
+                              tran_fun = exp) %>% 
+        mutate(N_uM = ifelse(N_uM == 0.11, 0, 3.6),
+               Temp_N = paste0("TN_",MeanPre2wksTemp,"_", N_uM)) %>% 
+        pivot_wider(id_cols = MetDate2, names_from = Temp_N, values_from = Values) %>% 
+        mutate(Temp_LowN_PerChange = (TN_21_0-TN_11_0)/TN_11_0*100,
+               Temp_HighN_PerChange = (TN_21_3.6-TN_11_3.6)/TN_11_3.6*100,
+               N_Cold_PerChange = (TN_11_3.6- TN_11_0)/TN_11_0*100,
+               N_Warm_PerChange = (TN_21_3.6- TN_21_0)/TN_11_0*100,
+               Response = "2017_Nassim_MS",
+               Nutrient = "N")
+
 
 # Make tables ----
 
 # get list of response tables
 objects(pattern = "RT")
 
-ResponseTable <- rbind(RT_AFDM_2015_areal, RT_ER_2015_areal, RT_GPP_2015_areal, RT_NEP_2015_areal,  RT_Nassim_2015_areal,RT_Nfix_2015_areal,RT_Nup_2015_areal,
+ResponseTable <- rbind(
+                        #2015
+                        RT_AFDM_2015_areal, RT_ER_2015_areal, RT_GPP_2015_areal, RT_NEP_2015_areal,  RT_Nassim_2015_areal,RT_Nfix_2015_areal,RT_Nup_2015_areal,
                        
                        RT_ER_2015_MS, RT_GPP_2015_MS, RT_NEP_2015_MS, RT_Nassim_2015_MS,RT_Nfix_2015_MS,RT_Nup_2015_MS,
                        
+                       # 2016
                        RT_AFDM_2016_areal, RT_ER_2016_areal,RT_GPP_2016_areal,RT_NEP_2016_areal,RT_Nfix_2016_areal,
                        
-                       # AFDM_2017_areal is an NP model
                        RT_ER_2016_MS, RT_GPP_2016_MS, RT_NEP_2016_MS, RT_Nfix_2016_MS,
                        
-                       RT_ER_2017_areal, RT_GPP_2017_areal, RT_NEP_2017_areal, RT_Nassim_2017_areal, RT_Nfix_2017_areal, RT_Nup_2017_areal,
+                       # 2017
+                       RT_AFDM_2017_areal, RT_ER_2017_areal, RT_GPP_2017_areal, RT_NEP_2017_areal, RT_Nassim_2017_areal, RT_Nfix_2017_areal, RT_Nup_2017_areal,
                        
                        # Nup_2017_MS and Nassim_2017_MS is an NP model
-                       RT_ER_2017_MS, RT_GPP_2017_MS, RT_NEP_2017_MS, RT_Nfix_2017_MS) %>% 
+                       RT_ER_2017_MS, RT_GPP_2017_MS, RT_NEP_2017_MS, RT_Nfix_2017_MS, RT_Nup_2017_MS, RT_Nassim_2017_MS) %>% 
                 separate(Response, into = c("Year", "Response", "ArealOrMs"), sep = "_", remove = FALSE)
 
 # https://stackoverflow.com/questions/65327289/how-to-represent-a-datatable-in-r-as-a-heatmap
@@ -514,5 +557,20 @@ as.data.frame(ResponseTable) %>%
   gtsave("04_Tables4MS/ResponseTable2017.html")
 
 
-# save.image("02b_Script_SavedImages/17_EstimatedResponses_2015_Rdat")
+## Table 2 ----
+Table2 <- as.data.frame(ResponseTable) %>% 
+  select(Year, Response, ArealOrMs, MetDate2, Temp_LowN_PerChange:N_Warm_PerChange) %>% 
+  mutate(MetDate2 = case_when(MetDate2 == "2015-07-15" ~ "MD1",
+                              MetDate2 == "2015-07-27" ~ "MD2",
+                              MetDate2 == "2016-07-27" ~ "MD1",
+                              MetDate2 == "2016-08-02" ~ "MD2",
+                              MetDate2 == "2017-07-11" ~ "MD1",
+                              MetDate2 == "2017-07-22" ~ "MD2")) %>% 
+  pivot_wider(id_cols = Year:ArealOrMs, names_from = MetDate2, values_from = Temp_LowN_PerChange:N_Warm_PerChange) %>% 
+  mutate(across(Temp_LowN_PerChange_MD1:N_Warm_PerChange_MD2, \(x) round(x, digits = 0))) %>% 
+  arrange(Year, Response, ArealOrMs) 
+
+write.csv(Table2, "04_Tables4MS/Table2.csv")
+
+save.image("02b_Script_SavedImages/17_EstimatedResponses_2015.Rdata")
 # load("02b_Script_SavedImages/17_EstimatedResponses_2015_Rdat")

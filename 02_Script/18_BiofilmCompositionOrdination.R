@@ -1,5 +1,5 @@
 # Ordination of channel biofilm composition
-# JMH, 5 June 23
+# JMH, 5 June 23, Jul 2024
 
 library(tidyverse)
 library(vegan)
@@ -476,7 +476,7 @@ library(cowplot)
     scale_size_manual(values = c(2,5), guide = guide_legend("µM-N")) +
     scale_fill_brewer(palette = "RdYlBu", direction = -1) +
     annotate(geom = "text", x = -2.7, y = 3.8,
-             label = "e) N+P", size = 7, fontface = "bold", hjust = 0) +
+             label = "a)", size = 7, fontface = "bold", hjust = 0) +
     guides(fill=guide_legend(override.aes=list(shape=21, size = 6), "Temperature (°C)")) +
     theme_bw() +
     theme(axis.text = element_text(size = 16),
@@ -498,28 +498,35 @@ library(cowplot)
                  aes(x=0, y=0, xend=axis1*1, yend=axis2*1),
                  colour="red", size=1, arrow=arrow(length = unit(2,"mm")), alpha = 0.7) +
     geom_text_repel2(data=species.long4_2017,
-                     aes(x=axis1*1.25, y=axis2*1.25, label=labels),
+                     aes(x=axis1*1.1, y=axis2*1.1, label=labels),
                      colour="red", fontface = "bold", size = 5,
                      point.size = NA,
                      box.padding = 0.5) +
     scale_size_manual(values = c(2,5), guide = guide_legend("µM-N")) +
     scale_fill_brewer(palette = "RdYlBu", direction = -1) +
     annotate(geom = "text", x = -2.7, y = 3.8,
-             label = "f) N+P", size = 7, fontface = "bold", hjust = 0) +
+             label = "b)", size = 7, fontface = "bold", hjust = 0) +
     guides(fill=guide_legend(override.aes=list(shape=21, size = 6), "Temperature (°C)")) +
     theme_bw() +
     theme(axis.text = element_text(size = 16),
           axis.title = element_text(size = 20),
           legend.title = element_text(size = 12, face = "bold"))
 
-  png("05_Figures4MS/Fig4_Channels_Nexperiment_BiofilmComp_AllYears.png", 
-      units = "in", height = 12, width = 13, res = 300)
+  png("05_Figures4MS/18_Fig4_Channels_Nexperiment_BiofilmComp_2015_16.png", 
+      units = "in", height = 10, width = 11, res = 300)
   plot_grid(p_rda12a, p_rda12b, 
             p_rda12_2016a, p_rda12_2016b, 
-            p_rda12_2017a, p_rda12_2017b,
             ncol = 2,
-            nrow = 3,
+            nrow = 2,
             rel_widths = c(0.75,1))
+dev.off()  
+
+png("05_Figures4MS/18_FigS8_Channels_Nexperiment_BiofilmComp_2017.png", 
+    units = "in", height = 5, width = 11, res = 300)
+plot_grid(p_rda12_2017a, p_rda12_2017b,
+          ncol = 2,
+          nrow = 1,
+          rel_widths = c(0.75,1))
 dev.off()  
 
 # save/load ----

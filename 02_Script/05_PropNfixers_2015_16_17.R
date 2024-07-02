@@ -1,5 +1,5 @@
 # Proportion N fixers for 2015, 2016, 2017
-# JMH, Nov 2022
+# JMH, Nov 2022, Jul 2024
 
 # Libraries ----
 # general
@@ -565,7 +565,7 @@ ZIBR_2016_muA_phiA_ziA_pos_beta <- ZIBR_2016_muA_phiA_ziA %>%
     stat_lineribbon(.width = c(0), alpha = 1) +
     scale_color_manual(values = ColorVals2017, name = "Treatment")+
     scale_fill_manual(values = ColorVals2017, name = "Treatment") +
-    ylab("") +
+    ylab(expression(paste("Proportion ", N[2],"-fixers"))) +
     xlab("Temperature (°C)") +
     scale_y_continuous(limits = c(0,1.25), breaks = c(0, 0.25, 0.5, 0.75, 1.00, 1.25)) +
     scale_x_continuous(limits = c(5,25), breaks = c(5, 10, 15, 20, 25)) +
@@ -573,7 +573,7 @@ ZIBR_2016_muA_phiA_ziA_pos_beta <- ZIBR_2016_muA_phiA_ziA %>%
     theme(panel.background = element_rect(fill = "white", color = "white"),
           panel.border = element_rect(color = "black", fill = "NA", size = 1),
           axis.title.x = element_text(size = 22),
-          axis.title.y = element_text(size = 60),
+          axis.title.y = element_text(size = 22),
           axis.text = element_text(size = 18),
           axis.line = element_line(color = "black", size = 1),
           plot.background = element_rect(fill = "white", color =  "white"),
@@ -603,17 +603,26 @@ ZIBR_2016_muA_phiA_ziA_pos_beta <- ZIBR_2016_muA_phiA_ziA %>%
   # Print ----
   p1.gtf <- gtable_frame(ggplotGrob(p.PerNfixers2015), width = unit(1, "null"), height = unit(1, "null"))
   p2.gtf <- gtable_frame(ggplotGrob(p.PerNfixer2016), width = unit(1, "null"), height = unit(1, "null"))
-  p3.gtf <- gtable_frame(ggplotGrob(p.PerNfixer2017), width = unit(1, "null"), height = unit(1, "null"))
+  # p3.gtf <- gtable_frame(ggplotGrob(p.PerNfixer2017), width = unit(1, "null"), height = unit(1, "null"))
   
-  p123.gtf <- gtable_frame(gtable_rbind(p1.gtf, p2.gtf, p3.gtf), width = unit(3,"null"), height = unit(1,"null"))
+  p123.gtf <- gtable_frame(gtable_rbind(p1.gtf, p2.gtf), width = unit(3,"null"), height = unit(1,"null"))
   
-  png("05_Figures4MS/05_Fig5_2015to17_PerNfixer2.png", units = "in", height = 18, width = 8, res = 300)
+  png("05_Figures4MS/05_Fig4_2015to16_PerNfixer2.png", units = "in", height = 12, width = 8, res = 300)
   grid.newpage()
   grid.draw(p123.gtf)
-  grid.text(expression(paste("Percent ", N[2],"-fixers")), x = unit(0.04,"npc"), y = unit(0.5,"npc"), gp=gpar(fontsize = 36, face = "bold"), rot = 90)
-  grid.text("a) N-only", x = unit(0.31,"npc"), y = unit(0.985,"npc"), gp=gpar(fontsize = 28, fontface = "bold"))
-  grid.text("b) P-only", x = unit(0.31,"npc"), y = unit(0.65,"npc"), gp=gpar(fontsize = 28, fontface = "bold"))
-  grid.text("c) N + P", x = unit(0.31,"npc"), y = unit(0.315,"npc"), gp=gpar(fontsize = 28, fontface = "bold"))
+  grid.text(expression(paste("Proportion ", N[2],"-fixers")), x = unit(0.04,"npc"), y = unit(0.5,"npc"), gp=gpar(fontsize = 36, face = "bold"), rot = 90)
+  grid.text("a) N-only", x = unit(0.31,"npc"), y = unit(0.97,"npc"), gp=gpar(fontsize = 28, fontface = "bold"))
+  grid.text("b) P-only", x = unit(0.31,"npc"), y = unit(0.47,"npc"), gp=gpar(fontsize = 28, fontface = "bold"))
+  # grid.text("c) N + P", x = unit(0.31,"npc"), y = unit(0.315,"npc"), gp=gpar(fontsize = 28, fontface = "bold"))
+  dev.off()
+  
+  
+  p3.gtf <- gtable_frame(ggplotGrob(p.PerNfixer2017), width = unit(1, "null"), height = unit(1, "null"))
+  
+
+  
+  png("05_Figures4MS/05_FigS9_2017_PerNfixer2.png", units = "in", height = 6, width = 8, res = 300)
+  p.PerNfixer2017
   dev.off()
 
   
@@ -665,7 +674,9 @@ ZIBR_2016_muA_phiA_ziA_pos_beta <- ZIBR_2016_muA_phiA_ziA %>%
   write.csv(Tab_PorNfixer, "04_Tables4MS/05_PropNfixers_Table.csv")
 
 # save image ----
-  # save.image("02b_Script_SavedImages/05_PropNfix_2015_2016_Rdat")
-# load("02b_Script_SavedImages/05_PropNfix_2015_2016_Rdat")
+  #NOTE: RDAT is not in Repo due to its size. Available upon request.
+  OutOfRepoPath <- "/Users/hood.211/Library/CloudStorage/OneDrive-TheOhioStateUniversity/IcelandChannels_MS/20211016_EcoMongrphs/R_code_20221008_REDO/TooLarge4SumbissionUpload/"
+  # save.image(paste0(OutOfRepoPath,"05_PropNfix_2015_2016_Rdat"))
+  # load(paste0(OutOfRepoPath,"05_PropNfix_2015_2016_Rdat"))
 
 

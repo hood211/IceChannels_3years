@@ -9,7 +9,7 @@ library(gt)
 library(glue)
 
 # Saved image from modeling script ----
-load("02b_Script_savedImages/08_2017_GAMs_Areal_Rdat")
+load("02b_Script_savedImages/08_2017_GAMs_Areal.Rdata")
 
 
 # Model selection table ----

@@ -1,6 +1,6 @@
 # Generate Fig 3
 # Areal biomass  2015-2017
-# JMH Jan 2023
+# JMH Jan 2023, Jul 24
 
 # LOAD LIBRARIES ----
 library(tidyverse)
@@ -75,33 +75,33 @@ p2016.A.AFDM <- predict_gam(Areal_2016_AFDM_MostLikely, values = list(MeanPre2wk
 
 
 ### 2017 ----
-p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(NPratio_date = NPratio_date,
-                                                                          MeanPre2wksTemp = TempRange2017,
+p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(MeanPre2wksTemp = TempRange2017,
                                                                           MetDate2 = Dates2017)) %>% 
-                        mutate(fit.bt = exp(fit),
-                               se.fitL.bt = exp(fit-se.fit),
-                               se.fitU.bt = exp(fit+se.fit),
-                               Basis = "Areal") %>% 
-                    separate(NPratio_date, into = c("NPratio", "MetDate2b"), sep = "_") %>% 
-                    filter(MetDate2 == MetDate2b) %>% 
-                    mutate(across(c(NPratio, Basis), factor)) %>% 
-                    mutate(MetDate2 = ifelse((MetDate2 == "2017-07-11"), "Day1",
-                                             ifelse((MetDate2 == "2017-07-22"), "Day2", as.character(MetDate2))),
-                           MetDate2 = as.factor(MetDate2)) %>% 
-                    mutate(NPratio2 = fct_recode(NPratio,
-                                                 "N:P = 0.3" = "0.31",
-                                                 "N:P = 0.9" = "0.93", 
-                                                 "N:P = 10" = "10.22"),
-                           NPratio2 = fct_relevel(NPratio2,
-                                                  "N:P = 0.3",
-                                                  "N:P = 0.9", 
-                                                  "N:P = 10"))
+                            mutate(fit.bt = exp(fit),
+                                   se.fitL.bt = exp(fit-se.fit),
+                                   se.fitU.bt = exp(fit+se.fit),
+                                   trt = "N+P",
+                                   Basis = "Areal") %>% 
+                            mutate(across(c(trt, N_uM, Basis), factor)) %>% 
+                            mutate(MetDate2 = ifelse((MetDate2 == "2017-07-11"), "Day1",
+                                                     ifelse((MetDate2 == "2017-07-22"), "Day2", as.character(MetDate2))),
+                                   MetDate2 = as.factor(MetDate2)) %>% 
+                            mutate(N_uM2 = fct_recode(N_uM,
+                                                      "0 µM-N" = "0.11",
+                                                      "3.6 µM-N" = "3.68"))
+
+
+
+
+
+
+                        
 
 
 ## Plots ----
   ColorVals2015 <- c("black", "#FED976", "#339900", "#FD8D3C", "#F03B20", "#BD0026")
   ColorVals2016 <- c("black")
-  ColorVals2017 <- c("black", "#9900FF", "#FF00CC")
+  ColorVals2017 <- c("black", "#339900")
   
   pAFDM_2015 <- ggplot(p2015.A.AFDM %>% 
                          mutate(MD = ifelse(MetDate2 == "Day1", "MD1",
@@ -131,7 +131,7 @@ p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(NPratio_da
           strip.background = element_blank(),
           strip.text.x = element_text(size = 32, face = "bold"),
           strip.text.y = element_blank(),
-          legend.position = c(0.6,0.62),
+          legend.position = c(0.6,0.66),
           legend.title = element_text(size = 24, face = "bold"),
           legend.text = element_text(size = 20),
           legend.key.height = unit(1,"cm")) +
@@ -164,7 +164,7 @@ p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(NPratio_da
           strip.background = element_blank(),
           strip.text.x = element_text(size = 32, face = "bold"),
           strip.text.y = element_blank(),
-          legend.position = c(0.6,0.85),
+          legend.position = c(0.6,0.88),
           legend.title = element_text(size = 24, face = "bold"),
           legend.text = element_text(size = 20),
           legend.key.height = unit(1,"cm")) 
@@ -172,13 +172,13 @@ p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(NPratio_da
   pAFDM_2017 <-   ggplot(p2017.A.AFDM %>% 
                            mutate(MD = ifelse(MetDate2 == "Day1", "MD1",
                                               ifelse(MetDate2 == "Day2", "MD2", "BLAH"))), aes(ymin = se.fitL.bt, ymax = se.fitU.bt, y = fit.bt, x = MeanPre2wksTemp, 
-                                           color = NPratio2,
-                                           fill = NPratio2)) +
+                                           color = N_uM2,
+                                           fill = N_uM2)) +
     geom_vline(xintercept = 11, linewidth = 0.6, color = "grey") +
     geom_vline(xintercept = 21, linewidth = 0.6, color = "grey") +
       geom_ribbon(color = "transparent", alpha = 0.25) +
       geom_line(size = 1.25) +
-      ylab("") +
+      ylab(expression(paste("Biomass (g AFDM ", m^{-2},")"))) +
       xlab("Temperature (°C)") +
       facet_wrap(vars(MD)) +
       scale_color_manual(values = ColorVals2017, name = "Treatment")+
@@ -188,7 +188,7 @@ p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(NPratio_da
       theme(panel.background = element_rect(fill = "white", color = "white"),
             panel.border = element_rect(color = "black", fill = "NA", size = 1),
             axis.title.x = element_text(size = 32),
-            axis.title.y = element_text(size = 60),
+            axis.title.y = element_text(size = 22),
             axis.text = element_text(size = 24),
             axis.line = element_line(color = "black", size = 1),
             plot.background = element_rect(fill = "white", color =  "white"),
@@ -205,21 +205,23 @@ p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(NPratio_da
   # Print ----
   p1.gtf <- gtable_frame(ggplotGrob(pAFDM_2015), width = unit(1, "null"), height = unit(1, "null"))
   p2.gtf <- gtable_frame(ggplotGrob(pAFDM_2016), width = unit(1, "null"), height = unit(1, "null"))
-  p3.gtf <- gtable_frame(ggplotGrob(pAFDM_2017), width = unit(1, "null"), height = unit(1, "null"))
   
-  p123.gtf <- gtable_frame(gtable_rbind(p1.gtf, p2.gtf, p3.gtf), width = unit(3,"null"), height = unit(1,"null"))
+  p123.gtf <- gtable_frame(gtable_rbind(p1.gtf, p2.gtf), width = unit(2,"null"), height = unit(1,"null"))
   
-  png("05_Figures4MS/16_Fig3_3yrAFDM.png", units = "in", height = 18, width = 14, res = 300)
+  png("05_Figures4MS/16_Fig2_2yrAFDM.png", units = "in", height = 14, width = 16, res = 300)
   grid.newpage()
   grid.draw(p123.gtf)
     grid.text(expression(paste("Biomass (g AFDM ", m^{-2},")")), x = unit(0.04,"npc"), y = unit(0.5,"npc"), gp=gpar(fontsize = 36), rot = 90)
-    grid.text("a) N-only", x = unit(0.118, "npc"), y = unit(0.95, "npc"), gp=gpar(fontsize = 36, fontface = "bold"), hjust = 0)
-    grid.text("b) P-only", x = unit(0.118, "npc"), y = unit(0.615, "npc"), gp=gpar(fontsize = 36, fontface = "bold"), hjust = 0)
-    grid.text("c) N+P", x = unit(0.118, "npc"), y = unit(0.28, "npc"), gp=gpar(fontsize = 36, fontface = "bold"), hjust = 0)
+    grid.text("a) N-only", x = unit(0.118, "npc"), y = unit(0.93, "npc"), gp=gpar(fontsize = 36, fontface = "bold"), hjust = 0)
+    grid.text("b) P-only", x = unit(0.118, "npc"), y = unit(0.425, "npc"), gp=gpar(fontsize = 36, fontface = "bold"), hjust = 0)
+  dev.off()
+  
+  png("05_Figures4MS/16_FigS7_NpPAFDM.png", units = "in", height = 5, width = 12, res = 300)
+  pAFDM_2017
   dev.off()
   
   
 # save.image
-  # save.image("02b_Script_SavedImages/16_Biomass_PerNfixerPlots_Rdat")
+  # save.image("02b_Script_SavedImages/16_Biomass_PerNfixerPlots.Rdata")
   # load("02b_Script_SavedImages/16_Biomass_PerNfixerPlots_Rdat")
   

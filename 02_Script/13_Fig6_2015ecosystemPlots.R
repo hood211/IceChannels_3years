@@ -336,7 +336,8 @@ Areal_2015_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2015_AFDM_mostlikely.r
     
     p12.gtf <- gtable_frame(gtable_cbind(p1.gtf, p2.gtf), width = unit(3,"null"), height = unit(1,"null"))
     
-    png("05_Figures4MS/13_Fig6_2015_ArealandMS.png", units = "in", height = 18, width = 18, res = 300)
+    # png("05_Figures4MS/13_Fig6_2015_ArealandMS.png", units = "in", height = 18, width = 18, res = 600)
+    jpeg("05_Figures4MS/13_Fig6_2015_ArealandMS.jpg", units = "in", height = 18, width = 18, res = 350)
     grid.newpage()
     grid.draw(p12.gtf)
     
@@ -451,5 +452,5 @@ Areal_2015_AFDM_MostLikely <- readRDS("03_Model_RDS/Areal_2015_AFDM_mostlikely.r
     
   # save.image
     # save.image("02b_Script_SavedImages/13_Fig2_BM_Met_2015_Rdat")
-    # load("02b_Script_SavedImages/13_Fig2_BM_Met_2015_Rdat")
+    load("02b_Script_SavedImages/13_Fig2_BM_Met_2015_Rdat")
     

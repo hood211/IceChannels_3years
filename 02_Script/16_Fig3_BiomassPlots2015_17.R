@@ -216,7 +216,7 @@ p2017.A.AFDM <- predict_gam(Areal_2017_AFDM_MostLikely, values = list(MeanPre2wk
     grid.text("b) P-only", x = unit(0.118, "npc"), y = unit(0.425, "npc"), gp=gpar(fontsize = 36, fontface = "bold"), hjust = 0)
   dev.off()
   
-  png("05_Figures4MS/16_FigS7_NpPAFDM.png", units = "in", height = 5, width = 12, res = 300)
+  png("05_Figures4MS/16_FigS7_2017PAFDM.png", units = "in", height = 5, width = 12, res = 300)
   pAFDM_2017
   dev.off()
   

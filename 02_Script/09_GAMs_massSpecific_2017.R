@@ -248,8 +248,6 @@ ER_ModSel <- fun_ms_gams(R_uM_C_gAFDM_h, chanF, ERModFam); ER_ModSel
 chanF_ER <- chanF %>% 
   filter(Response == "R_uM_C_gAFDM_h")
 
-# wow! all most likely models have N:P or P.
-# although all are 'similar' to the temp only model
 ER_MostLikely <- gam(
   Values ~ s(MeanPre2wksTemp, by = P_uM) + s(MetDate2, bs = "re"),
                     family = ERModFam,
@@ -430,3 +428,4 @@ saveRDS(Nass_MostLikely, "03_Model_RDS/MassSpec_2017_Nass_mostlikely.rds")
 
 # save image ----
 # save.image("02b_Script_SavedImages/08_2017_GAMs_MassSpecific.Rdata")
+# load("02b_Script_SavedImages/08_2017_GAMs_MassSpecific.Rdata")

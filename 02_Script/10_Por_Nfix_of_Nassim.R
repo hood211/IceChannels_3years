@@ -277,7 +277,7 @@ p1 <- ggplot() +
   scale_shape_manual(values = c(21,22), name = "Measurement day") +
   theme_bw()+
   ylab(expression(paste("Areal ", paste(N[2]," fixation (mM N ",m^-2," ",h^-1,")")))) +
-  xlab(expression(paste("Areal Total N assim. (N mM N ",m^-2," ",h^-1,")"))) +
+  xlab(expression(paste("Areal Total N assim. (mM N ",m^-2," ",h^-1,")"))) +
   xlim(0,4000) +
   ylim(0,450) +
   guides( fill = guide_legend(override.aes=list(shape=21, size = 6))) +

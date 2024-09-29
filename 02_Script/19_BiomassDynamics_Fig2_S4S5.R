@@ -191,7 +191,7 @@ bio16 <- BioDyn %>%
          date_col = as.factor(date_col)) %>% 
   droplevels()
 
-Plabels_2016 <- c("0 µM-N", "0.8 µM-N", "1.6 µM-N", "3.6 µM-N", "4.8 µM-N", "6.5 µM-N")
+Plabels_2016 <- c("0 µM-N", "0.8 µM-P", "1.6 µM-P", "3.6 µM-P", "4.8 µM-P", "6.5 µM-P")
 names(Plabels_2016) <-  c("0", "0.8", "1.6", "3.6", "4.8", "6.5")
 
 png("05_Figures4MS/19_FigS5_BMtimeSeries2016.png", units = "in", height = 12, width = 15, res = 300)
@@ -200,7 +200,7 @@ ggplot() +
   geom_point(data = bio16, aes(y = gAFDM_m2_F, x = ExpDays, fill = date_col),
              shape = 21, size = 4) +
   facet_grid(PuM ~ TempFval,
-             labeller = labeller(PuM = Nlabels_2015)) +
+             labeller = labeller(PuM = Plabels_2016)) +
   xlab("Day of experiment") +
   ylab(expression(paste("Biofilm biomass (g AFDM ",m^-2,")"))) +
   scale_fill_manual(values = c("grey40", "violet", "violetred3"), 
